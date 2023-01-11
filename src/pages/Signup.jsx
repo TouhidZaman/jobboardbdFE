@@ -45,10 +45,7 @@ const SignUp = () => {
     }
   }, [password, confirmPassword]);
 
-  const onSubmit = (data) => {
-    console.log(data);
-    dispatch(createUser(data));
-  };
+  const onSubmit = (data) => dispatch(createUser(data)); //creating new user
 
   return (
     <div className="flex h-screen items-center pt-14">

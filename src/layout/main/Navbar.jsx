@@ -1,12 +1,28 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+
+import auth from "../../firebase/firebase.config";
+import { logOut } from "features/auth/authSlice";
+import { toast } from "react-hot-toast";
 
 const Navbar = () => {
   const { pathname } = useLocation();
   const {
     user: { email },
   } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    signOut(auth)
+      .then(() => {
+        dispatch(logOut());
+      })
+      .catch((error) => {
+        toast.error("Oops failed to logout");
+      });
+  };
 
   return (
     <nav
@@ -31,7 +47,9 @@ const Navbar = () => {
         ) : (
           <>
             <li>
-              <button className="hover:text-primary">Logout</button>
+              <button className="hover:text-primary" onClick={handleLogout}>
+                Logout
+              </button>
             </li>
             <li>
               <Link
