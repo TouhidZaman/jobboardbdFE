@@ -23,6 +23,15 @@ export const loginUser = createAsyncThunk("auth/loginUser", async ({email, passw
     return res?.user?.email;
 })
 
+export const getUser = createAsyncThunk("auth/getUser", async (email) => {
+    const res = await fetch(`${process.env.REACT_APP_baseURL}users/${email}`);
+    const data = await res.json();
+    if(data.status) {
+        return data.data;
+    } 
+    return { email };
+})
+
 const authSlice = createSlice({
     name:"auth",
     initialState,
@@ -36,10 +45,7 @@ const authSlice = createSlice({
                 email: "",
                 role: ""
             }
-        },
-        setUser: (state, {payload}) => {
-            state.user.email=payload
-        },
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -71,9 +77,26 @@ const authSlice = createSlice({
                 state.isError=true;
                 state.error=action.error.message;
             })
+            .addCase(getUser.pending, (state) => {
+                state.isLoading=true;
+                state.isError=false;
+            })
+            .addCase(getUser.fulfilled, (state, {payload}) => {
+                state.user={
+                    ...state.user,
+                    ...payload
+                }
+                state.isLoading=false;
+                state.isError=false;
+            })
+            .addCase(getUser.rejected, (state, action) => {
+                state.isLoading=false;
+                state.isError=true;
+                state.error=action.error.message;
+            })
     }
 })
 
-export const { resetError, logOut, setUser } = authSlice.actions
+export const { resetError, logOut } = authSlice.actions
 
 export default authSlice.reducer

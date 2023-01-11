@@ -1,15 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
 import { FaChevronLeft } from "react-icons/fa";
+import { useAddUserMutation } from "features/auth/authAPI";
+import { toast } from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { resetError } from "features/auth/authSlice";
+import Loading from "components/reusable/Loading";
 
 const EmployerRegistration = () => {
-  const [countries, setCountries] = useState([]);
-  console.log(countries);
-
-  const { handleSubmit, register, control } = useForm();
-  const term = useWatch({ control, name: "term" });
+  const {
+    user: { email },
+    isLoading,
+  } = useSelector((state) => state.auth);
+  const [postUser, { isSuccess, isError, error }] = useAddUserMutation();
+  const dispatch = useDispatch();
+  const { handleSubmit, register, reset, control } = useForm();
   const navigate = useNavigate();
+  const term = useWatch({ control, name: "term" });
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Employee registration successful");
+      navigate("/dashboard");
+    } else if (isError) {
+      toast.error(error);
+      dispatch(resetError());
+    }
+  }, [isSuccess, navigate, isError, error, dispatch]);
+
+  // effect runs when user state is updated
+  useEffect(() => {
+    // reset form with user data
+    reset({ email });
+  }, [email, reset]);
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   const businessCategory = [
     "Automotive",
@@ -34,15 +62,7 @@ const EmployerRegistration = () => {
 
   const employeeRange = ["1 - 10", "11 - 50", "51 - 100", "Above 100"];
 
-  useEffect(() => {
-    fetch("https://restcountries.com/v3.1/all")
-      .then((res) => res.json())
-      .then((data) => setCountries(data));
-  }, []);
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const onSubmit = (data) => postUser({ ...data, email, role: "employer" });
 
   return (
     <div className="pt-14">
@@ -75,14 +95,20 @@ const EmployerRegistration = () => {
             <label className="mb-2" htmlFor="email">
               Email
             </label>
-            <input type="email" id="email" disabled {...register("email")} />
+            <input
+              type="email"
+              className="cursor-not-allowed"
+              id="email"
+              disabled
+              {...register("email")}
+            />
           </div>
           <div className="flex flex-col w-full max-w-xs">
             <h1 className="mb-3">Gender</h1>
             <div className="flex gap-3">
               <div>
                 <input type="radio" id="male" {...register("gender")} value="male" />
-                <label className="ml-2 text-lg" for="male">
+                <label className="ml-2 text-lg" htmlFor="male">
                   Male
                 </label>
               </div>
@@ -93,7 +119,7 @@ const EmployerRegistration = () => {
                   {...register("gender")}
                   value="female"
                 />
-                <label className="ml-2 text-lg" for="female">
+                <label className="ml-2 text-lg" htmlFor="female">
                   Female
                 </label>
               </div>
@@ -104,7 +130,7 @@ const EmployerRegistration = () => {
                   {...register("gender")}
                   value="other"
                 />
-                <label className="ml-2 text-lg" for="other">
+                <label className="ml-2 text-lg" htmlFor="other">
                   Other
                 </label>
               </div>
@@ -118,27 +144,31 @@ const EmployerRegistration = () => {
             <input type="text" {...register("companyName")} id="companyName" />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-3" for="employeeRange">
+            <label className="mb-3" htmlFor="employeeRange">
               Number of employee
             </label>
             <select {...register("employeeRange")} id="employeeRange">
               {employeeRange
                 .sort((a, b) => a.localeCompare(b))
                 .map((category) => (
-                  <option value={category}>{category}</option>
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
                 ))}
             </select>
           </div>
 
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-3" for="companyCategory">
+            <label className="mb-3" htmlFor="companyCategory">
               Company's Category
             </label>
             <select {...register("companyCategory")} id="companyCategory">
               {businessCategory
                 .sort((a, b) => a.localeCompare(b))
                 .map((category) => (
-                  <option value={category}>{category}</option>
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
                 ))}
             </select>
           </div>
@@ -157,7 +187,7 @@ const EmployerRegistration = () => {
                 {...register("term")}
                 id="terms"
               />
-              <label for="terms">I agree to terms and conditions</label>
+              <label htmlFor="terms">I agree to terms and conditions</label>
             </div>
             <button disabled={!term} className="btn" type="submit">
               Submit

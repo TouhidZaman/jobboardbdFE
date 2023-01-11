@@ -36,19 +36,19 @@ const CandidateRegistration = () => {
         >
           <h1 className="w-full text-2xl text-primary mb-5">Candidate</h1>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="firstName">
+            <label className="mb-2" htmlHtmlFor="firstName">
               First Name
             </label>
             <input type="text" id="firstName" {...register("firstName")} />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="lastName">
+            <label className="mb-2" htmlHtmlFor="lastName">
               Last Name
             </label>
             <input type="text" id="lastName" {...register("lastName")} />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="email">
+            <label className="mb-2" htmlHtmlFor="email">
               Email
             </label>
             <input type="email" id="email" {...register("email")} />
@@ -58,7 +58,7 @@ const CandidateRegistration = () => {
             <div className="flex gap-3">
               <div>
                 <input type="radio" id="male" {...register("gender")} value="male" />
-                <label className="ml-2 text-lg" for="male">
+                <label className="ml-2 text-lg" htmlFor="male">
                   Male
                 </label>
               </div>
@@ -69,7 +69,7 @@ const CandidateRegistration = () => {
                   {...register("gender")}
                   value="female"
                 />
-                <label className="ml-2 text-lg" for="female">
+                <label className="ml-2 text-lg" htmlFor="female">
                   Female
                 </label>
               </div>
@@ -80,7 +80,7 @@ const CandidateRegistration = () => {
                   {...register("gender")}
                   value="other"
                 />
-                <label className="ml-2 text-lg" for="other">
+                <label className="ml-2 text-lg" htmlFor="other">
                   Other
                 </label>
               </div>
@@ -88,7 +88,7 @@ const CandidateRegistration = () => {
           </div>
           <hr className="w-full mt-2 bg-black" />
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-3" for="country">
+            <label className="mb-3" htmlFor="country">
               Country
             </label>
             <select {...register("country")} id="country">
@@ -100,19 +100,19 @@ const CandidateRegistration = () => {
             </select>
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="address">
+            <label className="mb-2" htmlHtmlFor="address">
               Street Address
             </label>
             <input type="text" {...register("address")} id="address" />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="city">
+            <label className="mb-2" htmlHtmlFor="city">
               City
             </label>
             <input type="text" {...register("city")} id="city" />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlFor="postcode">
+            <label className="mb-2" htmlHtmlFor="postcode">
               Postal Code
             </label>
             <input type="text" {...register("postcode")} id="postcode" />
@@ -126,7 +126,7 @@ const CandidateRegistration = () => {
                 {...register("term")}
                 id="terms"
               />
-              <label for="terms">I agree to terms and conditions</label>
+              <label htmlFor="terms">I agree to terms and conditions</label>
             </div>
             <button disabled={!term} className="btn" type="submit">
               Submit
