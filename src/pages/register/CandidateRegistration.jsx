@@ -2,12 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
+
+import { useAddUserMutation } from "features/auth/authAPI";
+import { resetError } from "features/auth/authSlice";
+import Loading from "components/reusable/Loading";
 
 const CandidateRegistration = () => {
+  const {
+    user: { email },
+    isLoading,
+  } = useSelector((state) => state.auth);
+  const [postUser, { isSuccess, isError, error }] = useAddUserMutation();
+  const dispatch = useDispatch();
   const [countries, setCountries] = useState([]);
-  const { handleSubmit, register, control } = useForm();
+  const { handleSubmit, register, reset, control } = useForm();
   const term = useWatch({ control, name: "term" });
-  console.log(term);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,9 +27,27 @@ const CandidateRegistration = () => {
       .then((data) => setCountries(data));
   }, []);
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Candidate registration successful");
+      navigate("/dashboard");
+    } else if (isError) {
+      toast.error(error);
+      dispatch(resetError());
+    }
+  }, [isSuccess, navigate, isError, error, dispatch]);
+
+  // effect runs when user state is updated
+  useEffect(() => {
+    // reset form with user data
+    reset({ email });
+  }, [email, reset]);
+
+  const onSubmit = (data) => postUser({ ...data, email, role: "candidate" });
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="pt-14">
@@ -36,22 +65,28 @@ const CandidateRegistration = () => {
         >
           <h1 className="w-full text-2xl text-primary mb-5">Candidate</h1>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlHtmlFor="firstName">
+            <label className="mb-2" htmlFor="firstName">
               First Name
             </label>
             <input type="text" id="firstName" {...register("firstName")} />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlHtmlFor="lastName">
+            <label className="mb-2" htmlFor="lastName">
               Last Name
             </label>
             <input type="text" id="lastName" {...register("lastName")} />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlHtmlFor="email">
+            <label className="mb-2" htmlFor="email">
               Email
             </label>
-            <input type="email" id="email" {...register("email")} />
+            <input
+              type="email"
+              className="cursor-not-allowed"
+              disabled
+              id="email"
+              {...register("email")}
+            />
           </div>
           <div className="flex flex-col w-full max-w-xs">
             <h1 className="mb-3">Gender</h1>
@@ -95,24 +130,26 @@ const CandidateRegistration = () => {
               {countries
                 .sort((a, b) => a?.name?.common?.localeCompare(b?.name?.common))
                 .map(({ name }) => (
-                  <option value={name.common}>{name.common}</option>
+                  <option key={name.common} value={name.common}>
+                    {name.common}
+                  </option>
                 ))}
             </select>
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlHtmlFor="address">
+            <label className="mb-2" htmlFor="address">
               Street Address
             </label>
             <input type="text" {...register("address")} id="address" />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlHtmlFor="city">
+            <label className="mb-2" htmlFor="city">
               City
             </label>
             <input type="text" {...register("city")} id="city" />
           </div>
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-2" htmlHtmlFor="postcode">
+            <label className="mb-2" htmlFor="postcode">
               Postal Code
             </label>
             <input type="text" {...register("postcode")} id="postcode" />

@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
-import { FaChevronLeft } from "react-icons/fa";
-import { useAddUserMutation } from "features/auth/authAPI";
-import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import { FaChevronLeft } from "react-icons/fa";
+import { toast } from "react-hot-toast";
+
+import { useAddUserMutation } from "features/auth/authAPI";
 import { resetError } from "features/auth/authSlice";
 import Loading from "components/reusable/Loading";
 
