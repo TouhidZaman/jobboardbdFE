@@ -6,7 +6,7 @@ import Home from "pages/home/Home";
 import JobDetails from "pages/JobDetails";
 import Jobs from "pages/Jobs";
 import Login from "pages/Login";
-import Signup from "pages/Signup";
+import SignUp from "pages/Signup";
 import PrivateRoute from "utils/PrivateRoute";
 import AddJob from "pages/employeeDashboard/AddJob";
 import EmployerDashboard from "pages/employeeDashboard/EmployerDashboard";
@@ -35,7 +35,7 @@ const routes = createBrowserRouter([
       },
       {
         path: "/signup",
-        element: <Signup />,
+        element: <SignUp />,
       },
       {
         path: "/register",
