@@ -2,12 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
+
+import { useAddUserMutation } from "features/auth/authAPI";
+import { resetError } from "features/auth/authSlice";
+import Loading from "components/reusable/Loading";
 
 const CandidateRegistration = () => {
+  const {
+    user: { email },
+    isLoading,
+  } = useSelector((state) => state.auth);
+  const [postUser, { isSuccess, isError, error }] = useAddUserMutation();
+  const dispatch = useDispatch();
   const [countries, setCountries] = useState([]);
-  const { handleSubmit, register, control } = useForm();
+  const { handleSubmit, register, reset, control } = useForm();
   const term = useWatch({ control, name: "term" });
-  console.log(term);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,9 +27,27 @@ const CandidateRegistration = () => {
       .then((data) => setCountries(data));
   }, []);
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Candidate registration successful");
+      navigate("/dashboard");
+    } else if (isError) {
+      toast.error(error);
+      dispatch(resetError());
+    }
+  }, [isSuccess, navigate, isError, error, dispatch]);
+
+  // effect runs when user state is updated
+  useEffect(() => {
+    // reset form with user data
+    reset({ email });
+  }, [email, reset]);
+
+  const onSubmit = (data) => postUser({ ...data, email, role: "candidate" });
+
+  if (isLoading) {
+    return <Loading />;
+  }
 
   return (
     <div className="pt-14">
@@ -51,14 +80,20 @@ const CandidateRegistration = () => {
             <label className="mb-2" htmlFor="email">
               Email
             </label>
-            <input type="email" id="email" {...register("email")} />
+            <input
+              type="email"
+              className="cursor-not-allowed"
+              disabled
+              id="email"
+              {...register("email")}
+            />
           </div>
           <div className="flex flex-col w-full max-w-xs">
             <h1 className="mb-3">Gender</h1>
             <div className="flex gap-3">
               <div>
                 <input type="radio" id="male" {...register("gender")} value="male" />
-                <label className="ml-2 text-lg" for="male">
+                <label className="ml-2 text-lg" htmlFor="male">
                   Male
                 </label>
               </div>
@@ -69,7 +104,7 @@ const CandidateRegistration = () => {
                   {...register("gender")}
                   value="female"
                 />
-                <label className="ml-2 text-lg" for="female">
+                <label className="ml-2 text-lg" htmlFor="female">
                   Female
                 </label>
               </div>
@@ -80,7 +115,7 @@ const CandidateRegistration = () => {
                   {...register("gender")}
                   value="other"
                 />
-                <label className="ml-2 text-lg" for="other">
+                <label className="ml-2 text-lg" htmlFor="other">
                   Other
                 </label>
               </div>
@@ -88,14 +123,16 @@ const CandidateRegistration = () => {
           </div>
           <hr className="w-full mt-2 bg-black" />
           <div className="flex flex-col w-full max-w-xs">
-            <label className="mb-3" for="country">
+            <label className="mb-3" htmlFor="country">
               Country
             </label>
             <select {...register("country")} id="country">
               {countries
                 .sort((a, b) => a?.name?.common?.localeCompare(b?.name?.common))
                 .map(({ name }) => (
-                  <option value={name.common}>{name.common}</option>
+                  <option key={name.common} value={name.common}>
+                    {name.common}
+                  </option>
                 ))}
             </select>
           </div>
@@ -126,7 +163,7 @@ const CandidateRegistration = () => {
                 {...register("term")}
                 id="terms"
               />
-              <label for="terms">I agree to terms and conditions</label>
+              <label htmlFor="terms">I agree to terms and conditions</label>
             </div>
             <button disabled={!term} className="btn" type="submit">
               Submit
