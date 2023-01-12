@@ -5,14 +5,8 @@ import { useSelector } from "react-redux";
 
 const Sidebar = () => {
   const { role } = useSelector((state) => state.auth.user);
-  const candidateRoutes = [
-    { displayName: "My Profile", path: "profile" },
-    { displayName: "Applied Jobs", path: "applied-jobs" },
-  ];
-  const employerRoutes = [
-    { displayName: "My Profile", path: "profile" },
-    { displayName: "Add Job", path: "add-job" },
-  ];
+  const candidateRoutes = [{ displayName: "Applied Jobs", path: "applied-jobs" }];
+  const employerRoutes = [{ displayName: "Add Job", path: "add-job" }];
   return (
     <div className="bg-primary/10 col-span-2 h-screen sticky top-0">
       <ul className="flex flex-col gap-2 w-full h-full  p-3">
@@ -50,4 +44,3 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-
