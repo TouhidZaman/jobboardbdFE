@@ -1,14 +1,31 @@
-import React from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { BsArrowRightShort, BsArrowReturnRight } from "react-icons/bs";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-hot-toast";
 
 import meeting from "assets/meeting.jpg";
-import { useGetJobByIdQuery } from "features/jobs/jobsAPI";
+import { useApplyJobMutation, useGetJobByIdQuery } from "features/jobs/jobsAPI";
 import Loading from "components/reusable/Loading";
+import { resetError } from "features/auth/authSlice";
 
 const JobDetails = () => {
   const { jobId } = useParams();
   const { data, isLoading } = useGetJobByIdQuery(jobId);
+  const [applyNow, { isSuccess, isError, error }] = useApplyJobMutation();
+  const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Applied successfully");
+      // navigate("/my-jobs");
+    } else if (isError) {
+      toast.error(error);
+      dispatch(resetError());
+    }
+  }, [isSuccess, isError, error, dispatch]);
 
   if (isLoading) {
     return <Loading />;
@@ -26,8 +43,23 @@ const JobDetails = () => {
     requirements,
     responsibilities,
     overview,
+    applicants,
     queries,
   } = data?.data || {};
+
+  const handleJobApply = () => {
+    if (!user?.email) {
+      toast.error("please login first to apply");
+      navigate("/login");
+    } else {
+      const applyData = {
+        jobId,
+        userId: user._id,
+        email: user.email,
+      };
+      applyNow(applyData);
+    }
+  };
 
   return (
     <div className="pt-14 grid grid-cols-12 gap-5">
@@ -38,7 +70,14 @@ const JobDetails = () => {
         <div className="space-y-5">
           <div className="flex justify-between items-center mt-5">
             <h1 className="text-xl font-semibold text-primary">{position}</h1>
-            <button className="btn">Apply</button>
+
+            <button
+              className="btn"
+              disabled={applicants.find((a) => a.email === user?.email)}
+              onClick={handleJobApply}
+            >
+              Apply
+            </button>
           </div>
           <div>
             <h1 className="text-primary text-lg font-medium mb-3">Overview</h1>
@@ -48,7 +87,7 @@ const JobDetails = () => {
             <h1 className="text-primary text-lg font-medium mb-3">Skills</h1>
             <ul>
               {skills.map((skill) => (
-                <li className="flex items-center">
+                <li key={skill} className="flex items-center">
                   <BsArrowRightShort /> <span>{skill}</span>
                 </li>
               ))}
@@ -57,9 +96,9 @@ const JobDetails = () => {
           <div>
             <h1 className="text-primary text-lg font-medium mb-3">Requirements</h1>
             <ul>
-              {requirements.map((skill) => (
-                <li className="flex items-center">
-                  <BsArrowRightShort /> <span>{skill}</span>
+              {requirements.map((req) => (
+                <li key={req} className="flex items-center">
+                  <BsArrowRightShort /> <span>{req}</span>
                 </li>
               ))}
             </ul>
@@ -69,9 +108,9 @@ const JobDetails = () => {
               Responsibilities
             </h1>
             <ul>
-              {responsibilities.map((skill) => (
-                <li className="flex items-center">
-                  <BsArrowRightShort /> <span>{skill}</span>
+              {responsibilities.map((res) => (
+                <li key={res} className="flex items-center">
+                  <BsArrowRightShort /> <span>{res}</span>
                 </li>
               ))}
             </ul>
@@ -87,7 +126,10 @@ const JobDetails = () => {
                   <small>{email}</small>
                   <p className="text-lg font-medium">{question}</p>
                   {reply?.map((item) => (
-                    <p className="flex items-center gap-2 relative left-5">
+                    <p
+                      key={item}
+                      className="flex items-center gap-2 relative left-5"
+                    >
                       <BsArrowReturnRight /> {item}
                     </p>
                   ))}
@@ -177,4 +219,3 @@ const JobDetails = () => {
 };
 
 export default JobDetails;
-

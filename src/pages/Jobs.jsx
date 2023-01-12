@@ -10,7 +10,6 @@ const Jobs = () => {
   const { data, isLoading, isError, error } = useGetJobsQuery();
   const jobsData = data?.data || [];
   const dispatch = useDispatch();
-  console.log(data, "im data");
   useEffect(() => {
     if (isError) {
       toast.error(error);
@@ -28,7 +27,7 @@ const Jobs = () => {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-5">
         {jobsData.map((job) => (
-          <JobCard jobData={job} />
+          <JobCard key={job._id} jobData={job} />
         ))}
       </div>
     </div>
@@ -36,4 +35,3 @@ const Jobs = () => {
 };
 
 export default Jobs;
-
