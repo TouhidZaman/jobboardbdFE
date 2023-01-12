@@ -52,10 +52,12 @@ const JobDetails = () => {
       toast.error("please login first to apply");
       navigate("/login");
     } else {
+      const date = new Date();
       const applyData = {
         jobId,
         userId: user._id,
         email: user.email,
+        date: date.toISOString(),
       };
       applyNow(applyData);
     }

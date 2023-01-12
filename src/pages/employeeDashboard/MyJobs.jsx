@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
-import { useGetAppliedJobsQuery } from "features/jobs/jobsAPI";
+import { useGetMyJobsQuery } from "features/jobs/jobsAPI";
 import JobCard from "components/reusable/JobCard";
 import { resetError } from "features/auth/authSlice";
 import Loading from "components/reusable/Loading";
 
-const AppliedJobs = () => {
+const MyJobs = () => {
   const {
-    user: { email },
+    user: { _id: employerId },
     isLoading,
   } = useSelector((state) => state.auth);
-  const { data, isError, error } = useGetAppliedJobsQuery(email, { skip: !email });
+  const { data, isError, error } = useGetMyJobsQuery(employerId, {
+    skip: !employerId,
+  });
   const dispatch = useDispatch();
   const jobsData = data?.data || [];
-  const [approved, setApproved] = useState(false);
 
   useEffect(() => {
     if (isError) {
@@ -28,19 +29,10 @@ const AppliedJobs = () => {
     return <Loading />;
   }
 
-  const activeClass = "text-white  bg-primary border-white";
-
   return (
     <section>
       <div className="py-4 flex justify-between">
-        <h1 className="text-xl font-semibold">Applied Jobs</h1>
-
-        <button
-          className={`border px-3 py-2 rounded-full  ${approved ? activeClass : ""}`}
-          onClick={() => setApproved((prevSate) => !prevSate)}
-        >
-          Approved Only
-        </button>
+        <h1 className="text-xl font-semibold">My Jobs</h1>
       </div>
       <div className="grid grid-cols-2 gap-5 pb-5">
         {jobsData.map((job) => (
@@ -51,5 +43,5 @@ const AppliedJobs = () => {
   );
 };
 
-export default AppliedJobs;
+export default MyJobs;
 
