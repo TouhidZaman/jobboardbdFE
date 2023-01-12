@@ -18,7 +18,7 @@ const AddJob = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Job added successful");
+      toast.success("Job added successfully");
       // navigate("/my-jobs");
     } else if (isError) {
       toast.error(error);
