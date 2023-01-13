@@ -1,13 +1,18 @@
 import Loading from "components/reusable/Loading";
+import { useGetUserByIdQuery } from "features/users/usersAPI";
 import React from "react";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 const UserProfile = () => {
-  const { user, isLoading } = useSelector((state) => state.auth);
-  if (isLoading) {
+  const { userId } = useParams();
+  const { data, isLoading } = useGetUserByIdQuery(userId, { skip: !userId });
+  const { user, isLoading: authLoading } = useSelector((state) => state.auth);
+  if (isLoading || authLoading) {
     return <Loading />;
   }
-  const { firstName, lastName, gender, email, country, address, role } = user;
+  const { firstName, lastName, gender, email, country, address, role } =
+    data?.data || user;
 
   return (
     <div className="h-full p-4">

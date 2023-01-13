@@ -77,12 +77,12 @@ const JobDetails = () => {
     } else {
       const date = new Date();
       const applyData = {
-        jobId,
         userId: user._id,
         email: user.email,
+        name: user?.firstName + " " + user?.lastName,
         date: date.toISOString(),
       };
-      applyNow(applyData);
+      applyNow({ applyData, jobId });
     }
   };
 
@@ -100,7 +100,7 @@ const JobDetails = () => {
                 <button
                   className="btn"
                   disabled={!applicants?.length}
-                  onClick={() => navigate(`/job-applicants/${_id}`)}
+                  onClick={() => navigate(`/dashboard/job-applicants/${_id}`)}
                 >
                   View Applicants ({applicants?.length || "0"})
                 </button>

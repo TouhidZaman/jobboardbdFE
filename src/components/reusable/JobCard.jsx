@@ -49,7 +49,7 @@ const JobCard = ({ jobData, isEmployer }) => {
             <button
               className="btn"
               disabled={!applicants?.length}
-              onClick={() => navigate(`/job-applicants/${_id}`)}
+              onClick={() => navigate(`/dashboard/job-applicants/${_id}`)}
             >
               View Applicants ({applicants?.length || "0"})
             </button>

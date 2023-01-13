@@ -42,14 +42,19 @@ const AppliedJobs = () => {
           Approved Only
         </button>
       </div>
-      <div className="grid grid-cols-2 gap-5 pb-5">
-        {jobsData.map((job) => (
-          <JobCard key={job._id} jobData={job} />
-        ))}
-      </div>
+      {jobsData?.length ? (
+        <div className="grid grid-cols-2 gap-5 pb-5">
+          {jobsData.map((job) => (
+            <JobCard key={job._id} jobData={job} />
+          ))}
+        </div>
+      ) : (
+        <h3 className="text-center text-2xl mt-16">
+          Oops you have applied no jobs yet!
+        </h3>
+      )}
     </section>
   );
 };
 
 export default AppliedJobs;
-

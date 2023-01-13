@@ -26,8 +26,8 @@ const jobsAPI = apiSlice.injectEndpoints({
             invalidatesTags: ["jobs", "myJobs"]
         }),
         applyJob: builder.mutation({
-            query: (applyData) => ({
-                url: "apply",
+            query: ({applyData, jobId}) => ({
+                url: `apply/${jobId}`,
                 method: "PATCH",
                 body: applyData
             }),
