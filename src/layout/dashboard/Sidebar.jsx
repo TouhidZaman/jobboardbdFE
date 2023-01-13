@@ -6,11 +6,11 @@ import { useSelector } from "react-redux";
 const Sidebar = () => {
   const { role } = useSelector((state) => state.auth.user);
   const candidateRoutes = [
-    { displayName: String(role).toUpperCase(), path: "/dashboard" },
+    { displayName: "My Profile", path: "/dashboard" },
     { displayName: "Applied Jobs", path: "applied-jobs" },
   ];
   const employerRoutes = [
-    { displayName: String(role).toUpperCase(), path: "/dashboard" },
+    { displayName: "My Profile", path: "/dashboard" },
     { displayName: "My Jobs", path: "my-jobs" },
     { displayName: "Add Job", path: "add-job" },
   ];

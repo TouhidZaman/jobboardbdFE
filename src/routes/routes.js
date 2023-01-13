@@ -9,10 +9,10 @@ import Login from "pages/Login";
 import SignUp from "pages/Signup";
 import PrivateRoute from "utils/PrivateRoute";
 import AddJob from "pages/employeeDashboard/AddJob";
-import EmployerDashboard from "pages/employeeDashboard/EmployerDashboard";
-import CandidateDashboard from "pages/candidateDashboard/CandidateDashboard";
 import AppliedJobs from "pages/candidateDashboard/AppliedJobs";
 import MyJobs from "pages/employeeDashboard/MyJobs";
+import UserProfile from "pages/UserProfile";
+import ShowCandidates from "pages/employeeDashboard/ShowCandidates";
 
 const routes = createBrowserRouter([
   {
@@ -66,6 +66,10 @@ const routes = createBrowserRouter([
     ),
     children: [
       {
+        path: "/dashboard",
+        element: <UserProfile />,
+      },
+      {
         path: "add-job",
         element: <AddJob />,
       },
@@ -78,12 +82,12 @@ const routes = createBrowserRouter([
         element: <MyJobs />,
       },
       {
-        path: "employer",
-        element: <EmployerDashboard />,
+        path: "job-applicants/:jobId",
+        element: <ShowCandidates />,
       },
       {
-        path: "candidate",
-        element: <CandidateDashboard />,
+        path: "profile-view/:userId",
+        element: <UserProfile />,
       },
     ],
   },
