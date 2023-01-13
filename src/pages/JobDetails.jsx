@@ -5,7 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
 
 import meeting from "assets/meeting.jpg";
-import { useApplyJobMutation, useGetJobByIdQuery } from "features/jobs/jobsAPI";
+import {
+  useApplyJobMutation,
+  useCloseJobByIdMutation,
+  useGetJobByIdQuery,
+} from "features/jobs/jobsAPI";
 import Loading from "components/reusable/Loading";
 import { resetError } from "features/auth/authSlice";
 
@@ -13,10 +17,16 @@ const JobDetails = () => {
   const { jobId } = useParams();
   const { data, isLoading } = useGetJobByIdQuery(jobId);
   const [applyNow, { isSuccess, isError, error }] = useApplyJobMutation();
+  const [
+    closeJob,
+    { isSuccess: closeIsSuccess, isError: closeIsError, error: closeError },
+  ] = useCloseJobByIdMutation();
+
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  //Job Apply notifications
   useEffect(() => {
     if (isSuccess) {
       toast.success("Applied successfully");
@@ -26,6 +36,17 @@ const JobDetails = () => {
       dispatch(resetError());
     }
   }, [isSuccess, isError, error, dispatch]);
+
+  //Job close notifications
+  useEffect(() => {
+    if (closeIsSuccess) {
+      toast.success("Job closed successfully");
+      navigate("/dashboard/my-jobs");
+    } else if (closeIsError) {
+      toast.error(closeError);
+      dispatch(resetError());
+    }
+  }, [closeIsSuccess, closeIsError, closeError, dispatch, navigate]);
 
   if (isLoading) {
     return <Loading />;
@@ -45,6 +66,8 @@ const JobDetails = () => {
     overview,
     applicants,
     queries,
+    employerId,
+    _id,
   } = data?.data || {};
 
   const handleJobApply = () => {
@@ -72,14 +95,31 @@ const JobDetails = () => {
         <div className="space-y-5">
           <div className="flex justify-between items-center mt-5">
             <h1 className="text-xl font-semibold text-primary">{position}</h1>
-
-            <button
-              className="btn"
-              disabled={applicants.find((a) => a.email === user?.email)}
-              onClick={handleJobApply}
-            >
-              Apply
-            </button>
+            {user._id === employerId ? (
+              <div className="flex space-x-2">
+                <button
+                  className="btn"
+                  disabled={!applicants?.length}
+                  onClick={() => navigate(`/job-applicants/${_id}`)}
+                >
+                  View Applicants ({applicants?.length || "0"})
+                </button>
+                <button className="btn" onClick={() => closeJob(_id)}>
+                  Close
+                </button>
+              </div>
+            ) : (
+              <button
+                className="btn"
+                disabled={
+                  applicants.find((a) => a.email === user?.email) ||
+                  user.role === "employer"
+                }
+                onClick={handleJobApply}
+              >
+                Apply
+              </button>
+            )}
           </div>
           <div>
             <h1 className="text-primary text-lg font-medium mb-3">Overview</h1>

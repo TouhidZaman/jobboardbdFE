@@ -36,7 +36,7 @@ const MyJobs = () => {
       </div>
       <div className="grid grid-cols-2 gap-5 pb-5">
         {jobsData.map((job) => (
-          <JobCard key={job._id} jobData={job} />
+          <JobCard key={job._id} jobData={job} isEmployer />
         ))}
       </div>
     </section>
@@ -44,4 +44,3 @@ const MyJobs = () => {
 };
 
 export default MyJobs;
-
