@@ -6,8 +6,7 @@ import { useGetUserByIdQuery } from "features/users/usersAPI";
 const Conversation = ({ conversation, onClick }) => {
   const { user } = useSelector((state) => state.auth);
   const friendId = conversation.members.find((m) => m !== user._id);
-  const { data } = useGetUserByIdQuery(friendId, { skip: !friendId });
-  const { firstName, lastName, photoURL } = data?.data || {};
+  const { data: friend = {} } = useGetUserByIdQuery(friendId, { skip: !friendId });
 
   return (
     <div
@@ -17,13 +16,13 @@ const Conversation = ({ conversation, onClick }) => {
       <img
         className="w-6 h-6 rounded-full object-cover"
         src={
-          photoURL
-            ? photoURL
+          friend?.photoURL
+            ? friend.photoURL
             : "https://images.pexels.com/photos/3686769/pexels-photo-3686769.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
         }
         alt=""
       />
-      <span className="">{`${firstName} ${lastName}`}</span>
+      <span className="">{`${friend?.firstName} ${friend?.lastName}`}</span>
     </div>
   );
 };

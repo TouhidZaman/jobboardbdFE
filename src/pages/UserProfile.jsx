@@ -1,29 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 import { useGetUserByIdQuery } from "features/users/usersAPI";
 import Loading from "components/reusable/Loading";
+import { useAddChatMutation, useGetChatQuery } from "features/chat/chatAPI";
 
 const UserProfile = () => {
   const { userId } = useParams();
-  const { data, isLoading } = useGetUserByIdQuery(userId, { skip: !userId });
-  const { user, isLoading: authLoading } = useSelector((state) => state.auth);
   const navigate = useNavigate();
+  const { data: selectedUser, isLoading } = useGetUserByIdQuery(userId, {
+    skip: !userId,
+  });
+  const { user, isLoading: authLoading } = useSelector((state) => state.auth);
+  const { data: chat = {} } = useGetChatQuery(
+    {
+      senderId: user?._id,
+      receiverId: selectedUser?._id,
+    },
+    { skip: !selectedUser?._id || !user?._id }
+  );
+
+  const [createNewChat, { data, isSuccess }] = useAddChatMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate(`/dashboard/messenger/${data.insertedId}`);
+    }
+  }, [isSuccess, navigate, data]);
+
+  const handleChatStart = () => {
+    if (chat?._id) {
+      navigate(`/dashboard/messenger/${chat._id}`);
+    } else if (user?._id && selectedUser?._id) {
+      const chatInfo = {
+        senderId: user._id,
+        receiverId: selectedUser._id,
+      };
+      createNewChat(chatInfo);
+    }
+  };
 
   if (isLoading || authLoading) {
     return <Loading />;
   }
-  const {
-    firstName,
-    lastName,
-    gender,
-    email,
-    country,
-    address,
-    role,
-    _id: receiverId,
-  } = data?.data || user;
+  const { firstName, lastName, gender, email, country, address, role } =
+    selectedUser || user;
 
   return (
     <div className="h-full p-4">
@@ -61,7 +83,7 @@ const UserProfile = () => {
               <span>Connect</span>
             </button>
             <button
-              onClick={() => navigate(`/dashboard/messenger/${receiverId}`)}
+              onClick={() => handleChatStart()}
               className="flex items-center bg-primary/80 hover:bg-primary text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100"
             >
               <svg

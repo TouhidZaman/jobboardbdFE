@@ -1,55 +1,33 @@
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+
+import {
+  useGetChatsByUserQuery,
+  useGetMessagesByChatIdQuery,
+} from "features/chat/chatAPI";
 import { useGetUserByIdQuery } from "features/users/usersAPI";
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
 import Conversation from "./Conversation";
 import Message from "./Message";
 
 const Messenger = () => {
   const { conversationId } = useParams();
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const { data: conversations = [] } = useGetChatsByUserQuery(user?._id, {
+    skip: !user?._id,
+  });
 
-  const { data } = useGetUserByIdQuery(conversationId, { skip: !conversationId });
-  const { firstName, lastName, photoURL } = data?.data || {};
+  const receiverId = conversations?.find((c) => c._id === conversationId)
+    ?.members[1]; //need to write better logic here
 
-  const [messages, setMessages] = useState([
-    {
-      _id: "1",
-      sender: "63bf1723519fe5a9571b34a6",
-      text: "Hello how are you",
-      createdAt: Date.now(),
-    },
-    {
-      _id: "2",
-      sender: "63c048026765b28b143d4452", //Tuhin
-      text: "Im fine. how about you",
-      createdAt: Date.now(),
-    },
-    {
-      _id: "3",
-      sender: "63bf1723519fe5a9571b34a6",
-      text: "I'm also fine",
-      createdAt: Date.now(),
-    },
-  ]);
-  const [conversations, setConversations] = useState([
-    {
-      _id: "1",
-      members: ["63bf1723519fe5a9571b34a6", "63c048026765b28b143d4452"], //Tuhin
-    },
-    {
-      _id: "2",
-      members: ["63bf1723519fe5a9571b34a6", "63bf22e52ae99eae0ede0772"], // Mayeda
-    },
-    {
-      _id: "3",
-      members: ["63bf1723519fe5a9571b34a6", "63c406892e23e87ce3252dfc"], // Bappy Das
-    },
-    {
-      _id: "3",
-      members: ["63bf1723519fe5a9571b34a6", "63c404f72e23e87ce3252dfb"], // Eity
-    },
-  ]);
+  const { data: receiver = {} } = useGetUserByIdQuery(receiverId, {
+    skip: !receiverId,
+  });
 
-  const [conversation, setConversation] = useState(null);
+  const { data: messages = [] } = useGetMessagesByChatIdQuery(conversationId, {
+    skip: !conversationId,
+  });
 
   return (
     <section className="">
@@ -60,32 +38,38 @@ const Messenger = () => {
               <img
                 className="w-10 h-10 rounded-full object-cover"
                 src={
-                  photoURL
-                    ? photoURL
+                  receiver?.photoURL
+                    ? receiver.photoURL
                     : "https://images.pexels.com/photos/3686769/pexels-photo-3686769.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
                 }
                 alt=""
               />
               <div>
-                <h3>{`${firstName} ${lastName}`}</h3>
+                <h3>{`${receiver?.firstName} ${receiver?.lastName}`}</h3>
                 <span className="text-xs">Active 1h ago</span>
               </div>
             </div>
           </div>
           <div className="px-4">
-            {messages.map((message) => (
-              <Message
-                key={message._id}
-                message={message}
-                isSender={message.sender === "63bf1723519fe5a9571b34a6"}
-              />
-            ))}
+            {messages?.length ? (
+              messages.map((message) => (
+                <Message
+                  key={message._id}
+                  message={message}
+                  isSender={message.senderId === user?._id}
+                />
+              ))
+            ) : (
+              <h3 className="text-center text-xl mt-16">
+                Oops! no messages history found
+              </h3>
+            )}
           </div>
         </div>
         <aside className="conversations w-60 border-l-2 border-primary/30 px-4">
           {conversations.map((conversation) => (
             <Conversation
-              onClick={() => setConversation(conversation)}
+              onClick={() => navigate(`/dashboard/messenger/${conversation._id}`)}
               key={conversation._id}
               conversation={conversation}
             />
