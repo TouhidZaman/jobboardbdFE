@@ -13,6 +13,7 @@ import AppliedJobs from "pages/candidateDashboard/AppliedJobs";
 import MyJobs from "pages/employeeDashboard/MyJobs";
 import UserProfile from "pages/UserProfile";
 import ShowCandidates from "pages/employeeDashboard/ShowCandidates";
+import Messenger from "pages/Messenger/Messenger";
 
 const routes = createBrowserRouter([
   {
@@ -88,6 +89,10 @@ const routes = createBrowserRouter([
       {
         path: "profile-view/:userId",
         element: <UserProfile />,
+      },
+      {
+        path: "messenger/:conversationId",
+        element: <Messenger />,
       },
     ],
   },

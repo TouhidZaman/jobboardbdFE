@@ -1,18 +1,29 @@
-import Loading from "components/reusable/Loading";
-import { useGetUserByIdQuery } from "features/users/usersAPI";
 import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+
+import { useGetUserByIdQuery } from "features/users/usersAPI";
+import Loading from "components/reusable/Loading";
 
 const UserProfile = () => {
   const { userId } = useParams();
   const { data, isLoading } = useGetUserByIdQuery(userId, { skip: !userId });
   const { user, isLoading: authLoading } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
   if (isLoading || authLoading) {
     return <Loading />;
   }
-  const { firstName, lastName, gender, email, country, address, role } =
-    data?.data || user;
+  const {
+    firstName,
+    lastName,
+    gender,
+    email,
+    country,
+    address,
+    role,
+    _id: receiverId,
+  } = data?.data || user;
 
   return (
     <div className="h-full p-4">
@@ -49,7 +60,10 @@ const UserProfile = () => {
               </svg>
               <span>Connect</span>
             </button>
-            <button className="flex items-center bg-primary/80 hover:bg-primary text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100">
+            <button
+              onClick={() => navigate(`/dashboard/messenger/${receiverId}`)}
+              className="flex items-center bg-primary/80 hover:bg-primary text-gray-100 px-4 py-2 rounded text-sm space-x-2 transition duration-100"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4"
