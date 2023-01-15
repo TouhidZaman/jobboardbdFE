@@ -8,7 +8,7 @@ const chatAPI = apiSlice.injectEndpoints({
         method: "POST",
         body: chatInfo,
       }),
-      invalidatesTags: ["chats", "user-chats"],
+      invalidatesTags: ["chats", "user-chats", "chat"],
     }),
 
     getChatsByUser: builder.query({
