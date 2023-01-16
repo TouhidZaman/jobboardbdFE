@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { BsArrowRightShort, BsArrowReturnRight } from "react-icons/bs";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-hot-toast";
@@ -25,6 +25,7 @@ const JobDetails = () => {
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const currentLocation = useLocation();
 
   //Job Apply notifications
   useEffect(() => {
@@ -73,7 +74,10 @@ const JobDetails = () => {
   const handleJobApply = () => {
     if (!user?.email) {
       toast.error("please login first to apply");
-      navigate("/login");
+      navigate("/login", { state: { from: currentLocation }, replace: true });
+    } else if (!user?.role) {
+      toast.error("please register as a Candidate to apply");
+      navigate("/register", { state: { from: currentLocation }, replace: true });
     } else {
       const date = new Date();
       const applyData = {
