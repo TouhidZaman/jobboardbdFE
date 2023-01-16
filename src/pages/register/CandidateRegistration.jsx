@@ -30,7 +30,6 @@ const CandidateRegistration = () => {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Candidate registration successful");
-      navigate("/dashboard");
     } else if (isError) {
       toast.error(error);
       dispatch(resetError());
@@ -176,4 +175,3 @@ const CandidateRegistration = () => {
 };
 
 export default CandidateRegistration;
-

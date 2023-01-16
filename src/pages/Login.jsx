@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
@@ -17,16 +17,18 @@ const Login = () => {
   const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   useEffect(() => {
     if (!isLoading && email) {
       toast.success("Login successful");
-      navigate("/");
+      navigate(from, { replace: true });
     } else if (!isLoading && isError) {
       toast.error(error);
       dispatch(resetError());
     }
-  }, [isLoading, email, navigate, isError, error, dispatch]);
+  }, [isLoading, email, navigate, isError, error, dispatch, from]);
 
   const onSubmit = (data) => dispatch(loginUser(data)); //Login User
 
@@ -80,4 +82,3 @@ const Login = () => {
 };
 
 export default Login;
-

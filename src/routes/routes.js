@@ -14,6 +14,8 @@ import MyJobs from "pages/employeeDashboard/MyJobs";
 import UserProfile from "pages/UserProfile";
 import ShowCandidates from "pages/employeeDashboard/ShowCandidates";
 import Messenger from "pages/Messenger/Messenger";
+import RequireDBAccess from "utils/RequireDBAccess";
+import ProtectGuestRoute from "utils/ProtectGuestRoute";
 
 const routes = createBrowserRouter([
   {
@@ -44,7 +46,9 @@ const routes = createBrowserRouter([
         path: "/register",
         element: (
           <PrivateRoute>
-            <AccountCreator />
+            <ProtectGuestRoute>
+              <AccountCreator />
+            </ProtectGuestRoute>
           </PrivateRoute>
         ),
       },
@@ -52,7 +56,9 @@ const routes = createBrowserRouter([
         path: "/register/:type",
         element: (
           <PrivateRoute>
-            <AccountCreator />
+            <ProtectGuestRoute>
+              <AccountCreator />
+            </ProtectGuestRoute>
           </PrivateRoute>
         ),
       },
@@ -61,9 +67,9 @@ const routes = createBrowserRouter([
   {
     path: "/dashboard",
     element: (
-      <PrivateRoute>
+      <RequireDBAccess>
         <Dashboard />
-      </PrivateRoute>
+      </RequireDBAccess>
     ),
     children: [
       {
