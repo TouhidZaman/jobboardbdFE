@@ -21,13 +21,13 @@ const UserProfile = () => {
     { skip: !selectedUser?._id || !user?._id }
   );
 
-  const [createNewChat, { data, isSuccess }] = useAddChatMutation();
+  const [createNewChat, { data: newChat, isSuccess }] = useAddChatMutation();
 
   useEffect(() => {
     if (isSuccess) {
-      navigate(`/dashboard/messenger/${data.insertedId}`);
+      navigate(`/dashboard/messenger/${newChat.insertedId}`);
     }
-  }, [isSuccess, navigate, data]);
+  }, [isSuccess, navigate, newChat]);
 
   const handleChatStart = () => {
     if (chat?._id) {

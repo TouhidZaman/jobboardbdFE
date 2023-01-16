@@ -1,9 +1,12 @@
 import React from "react";
 import TimeAgo from "timeago-react";
 
-const Message = ({ message, isSender }) => {
+const Message = ({ message, isSender, scrollRef }) => {
   return (
-    <div className={`flex flex-col mt-4 w-full ${isSender ? "items-end" : ""}`}>
+    <div
+      ref={scrollRef}
+      className={`flex flex-col mt-4 w-full ${isSender ? "items-end" : ""}`}
+    >
       <div className="flex space-x-2 items-center">
         <img
           className="w-6 h-6 rounded-full object-cover"
