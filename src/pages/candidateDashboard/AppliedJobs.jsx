@@ -31,7 +31,7 @@ const AppliedJobs = () => {
   const activeClass = "text-white  bg-primary border-white";
 
   return (
-    <section>
+    <section className="px-4">
       <div className="py-4 flex justify-between">
         <h1 className="text-xl font-semibold">Applied Jobs</h1>
 

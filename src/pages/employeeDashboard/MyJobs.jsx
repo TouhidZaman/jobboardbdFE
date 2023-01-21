@@ -30,7 +30,7 @@ const MyJobs = () => {
   }
 
   return (
-    <section>
+    <section className="px-4">
       <div className="py-4 flex justify-between">
         <h1 className="text-xl font-semibold">My Jobs</h1>
       </div>
